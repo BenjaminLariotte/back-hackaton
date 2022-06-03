@@ -11,3 +11,5 @@ foreach ($data as $value)
 {
     $value = valid_data($value);
 }
+
+var_dump($value);
