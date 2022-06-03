@@ -1,12 +1,18 @@
 <?php
+require_once ROOT . 'dao/UserDao.php';
+require_once ROOT . 'core/Controller.php';
 
 class UserController extends Controller
 {
-    public function read($id)
+    public static function create($userObject)
     {
-        $this->loadDao("UserDao");
+        UserDao::createNewUser($userObject);
+    }
 
-        $userObject = $this->UserDao->readUser($id);
+    public static function read($id)
+    {
+
+        $userObject = UserDao::readUser($id);
 
         return $userObject;
     }
