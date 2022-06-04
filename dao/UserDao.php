@@ -20,7 +20,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
     {
         $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_id = ?", array($id));
 
-        $userObject = new User($userArray[0]["th_user_email"], $userArray[0]["th_user_pseudo"], $userArray[0]["th_user_password"]);
+        $userObject = new User($userArray[0]["th_user_pseudo"], $userArray[0]["th_user_email"], $userArray[0]["th_user_password"]);
         $userObject->setId((int)$id);
 
         return $userObject;
