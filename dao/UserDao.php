@@ -26,7 +26,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         return $userObject;
     }
 
-    public static function pseudoExist($pseudo)
+    public static function testLogin($pseudo)
     {
         $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ? OR th_user_email = ?", array($pseudo));
 
@@ -40,18 +40,4 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         }
     }
 
-    public function checkLogin($login)
-    {
-        $userArray = DataBase::databaseRequest("SELECT * from user WHERE user_email = ? OR user_pseudo = ?", array($login, $login));
-
-        if (!empty($userArray))
-        {
-            return $userArray;
-        }
-        else
-        {
-            $userArray = "";
-            return $userArray;
-        }
-    }
 }
