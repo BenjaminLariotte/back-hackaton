@@ -24,9 +24,11 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $userObject = UserController::read($_SESSION["id"]);
 
-    return (json_encode($userObject));
+    $responseArray = (array)$userObject;
+
+    echo json_encode($responseArray);
 }
 else
 {
-    return json_encode('erreur mec ! XD');
+    echo json_encode('erreur mec ! XD');
 }
