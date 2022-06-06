@@ -26,9 +26,15 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $responseArray = (array)$userObject;
 
+    $responseArray["response_code"] = 1;
+
+    print_r($responseArray);
+
     echo json_encode($responseArray);
 }
 else
 {
-    echo json_encode('erreur mec ! XD');
+    $responseArray["response_code"] = 2;
+
+    echo json_encode($responseArray);
 }

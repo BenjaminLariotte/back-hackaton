@@ -16,4 +16,12 @@ class UserController extends Controller
 
         return $userObject;
     }
+
+    public static function testLogin($login)
+    {
+        $testResponse = UserDao::pseudoExist($login);
+
+        return $testResponse;
+    }
 }
+
