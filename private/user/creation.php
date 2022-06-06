@@ -28,8 +28,6 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $responseArray["response_code"] = 1;
 
-    print_r($responseArray);
-
     echo json_encode($responseArray);
 }
 else

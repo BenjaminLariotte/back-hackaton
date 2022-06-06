@@ -26,9 +26,9 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         return $userObject;
     }
 
-    public static function testLogin($pseudo)
+    public static function testLogin($login)
     {
-        $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ? OR th_user_email = ?", array($pseudo));
+        $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ? OR th_user_email = ?", array($login, $login));
 
         if (!empty($userArray))
         {
