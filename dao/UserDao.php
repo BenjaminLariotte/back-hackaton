@@ -28,15 +28,21 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
 
     public static function testLogin($login)
     {
-        $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ? OR th_user_email = ?", array($login, $login));
+        $pseudo = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ?", array($login));
+        $email = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_email = ?", array($login));
 
-        if (!empty($userArray))
+
+        if (!empty($email))
         {
-            return 0;
+            return 2;
+        }
+        elseif (!empty($pseudo))
+        {
+            return 1;
         }
         else
         {
-            return 1;
+            return 0;
         }
     }
 
