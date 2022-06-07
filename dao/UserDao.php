@@ -48,7 +48,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
 
     public static function tryLogin($login, $password)
     {
-        $loginType = testLogin($login);
+        $loginType = UserDao::testLogin($login);
 
         switch ($loginType) {
             case 0 :
@@ -57,7 +57,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
             case 1 :
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_pseudo = ?", array($login));
                 break;
-            case 2 :       
+            case 2 :
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_email = ?", array($login));
                 break;
             default :
@@ -67,10 +67,11 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
 
 
 
-        if (password_verify($password, $request[0]["th_user_password"]);)
+        if (password_verify($password, $request[0]["th_user_password"]))
         {
-            return $request[0]["th_user_id"]
-        } else {
+            return $request[0]["th_user_id"];
+        }
+        else {
             return -3;
         }
     }
