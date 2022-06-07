@@ -57,7 +57,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
             case 1 :
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_pseudo = ?", array($login));
                 break;
-            case 2 :       
+            case 2 :
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_email = ?", array($login));
                 break;
             default :
@@ -66,7 +66,8 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         }
 
 
-        if (!empty($request))
+
+        if (password_verify($password, $request[0]["th_user_password"]))
         {
             if (password_verify($password, $request[0]["th_user_password"]))
             {

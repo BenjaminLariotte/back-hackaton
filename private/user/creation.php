@@ -15,7 +15,8 @@ foreach ($data as $value)
     $value = valid_data($value);
 }
 
-//création de l'user dans la bdd et retour de l'objet user si tout va bien
+
+//création de l'user dans la bdd et retour de l'objet user
 if (!is_null($data->username) && !is_null($data->email) && !is_null($data->password))
 {
     $userObject = new User($data->username, $data->email, password_hash($data->password, PASSWORD_DEFAULT));
