@@ -53,7 +53,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
 
         switch ($loginType) {
             case 0 :                
-                $error = new Error("Authentification ratée", "Nom de compte/email inexistant"); 
+                $error = new ErrorResponse("Authentification ratée", "Nom de compte/email inexistant");
                 return $error;
                 break;
             case 1 :
@@ -63,7 +63,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_email = ?", array($login));
                 break;
             default :
-                $error = new Error("Authentification ratée", "Retour de 'UserDao::testLogin' inconnu (\"$logintype\")");
+                $error = new ErrorResponse("Authentification ratée", "Retour de 'UserDao::testLogin' inconnu (\"$logintype\")");
 
                 break;
         }
@@ -78,7 +78,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
             }
         }
 
-        $error = new Error("Authentification ratée", "Mot de passe incorrect");
+        $error = new ErrorResponse("Authentification ratée", "Mot de passe incorrect");
 
         return $error;
     }
