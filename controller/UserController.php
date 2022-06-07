@@ -23,5 +23,12 @@ class UserController extends Controller
 
         return $testResponse;
     }
+
+    public static function tryLogin($login)
+    {
+        $testResponse = UserDao::tryLogin($login);
+
+        return $testResponse;
+    }
 }
 
