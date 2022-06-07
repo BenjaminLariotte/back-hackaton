@@ -70,11 +70,11 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         {
             if (password_verify($password, $request[0]["th_user_password"]))
             {
-                return $request[0]["th_user_id"]
+                return $request[0]["th_user_id"] ;
             }
         }
 
-        return -3
+        return -3;
     }
 
 }
