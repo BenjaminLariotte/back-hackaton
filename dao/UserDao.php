@@ -48,17 +48,17 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
 
     public static function tryLogin($login, $password)
     {
-        $loginType = testLogin($login)
+        $loginType = testLogin($login);
 
         switch ($loginType) {
             case 0 :
                 return -2; 
                 break;
             case 1 :
-                $request = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ? AND th_user_password = ?", array($login, $password));
+                $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_pseudo = ?", array($login));
                 break;
             case 2 :       
-                $request = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_email = ? AND th_user_password = ?", array($login, $password));
+                $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_email = ?", array($login));
                 break;
             default :
                 return -1;
@@ -66,7 +66,8 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         }
 
 
-        if (!empty($request))
+
+        if (password_verify($password, $request[0]["th_user_password"]);)
         {
             return $request[0]["th_user_id"]
         } else {
