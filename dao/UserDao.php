@@ -2,6 +2,7 @@
 require_once ROOT . "models/UserClass.php";
 require_once ROOT . "controller/UserController.php";
 require_once ROOT . "core/database_connection.php";
+require_once ROOT . "models/ErrorClass.php";
 
 
 class UserDao
@@ -51,8 +52,9 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         $loginType = UserDao::testLogin($login);
 
         switch ($loginType) {
-            case 0 :
-                return -2; 
+            case 0 :                
+                $error = new Error("Authentification ratée", "Nom de compte/email inexistant"); 
+                return $error;
                 break;
             case 1 :
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_pseudo = ?", array($login));
@@ -61,7 +63,8 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
                 $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_email = ?", array($login));
                 break;
             default :
-                return -1;
+                $error = new Error("Authentification ratée", "Retour de 'UserDao::testLogin' inconnu (\"$logintype\")");
+
                 break;
         }
 
@@ -75,7 +78,9 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
             }
         }
 
-        return -3;
+        $error = new Error("Authentification ratée", "Mot de passe incorrect")
+
+        return $error;
     }
 
 }
