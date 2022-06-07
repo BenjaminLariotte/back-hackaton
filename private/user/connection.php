@@ -15,12 +15,24 @@ foreach ($data as $value)
     $value = valid_data($value);
 }
 
-$userId = UserController::tryLogin($data->login, $data->password);
+if (!is_null($data->login && !is_null($data->password)))
+{
 
-$userObject = UserController::read($userId);
+    $userId = UserController::tryLogin($data->login, $data->password);
 
-$responseArray = (array)$userObject;
+    $userObject = UserController::read($userId);
 
-$responseArray["response_code"] = 1;
+    $responseArray = (array)$userObject;
 
-echo json_encode($responseArray);
+    $testArray = [];
+
+    foreach ($responseArray as $value)
+    {
+        $testArray[] = $value;
+
+    }
+
+    $testArray["response_code"] = 1;
+
+    echo json_encode($testArray);
+}

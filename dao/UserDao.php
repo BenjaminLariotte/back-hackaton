@@ -78,7 +78,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
             }
         }
 
-        $error = new Error("Authentification ratée", "Mot de passe incorrect")
+        $error = new Error("Authentification ratée", "Mot de passe incorrect");
 
         return $error;
     }
