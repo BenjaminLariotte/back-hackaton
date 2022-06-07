@@ -48,7 +48,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
 
     public static function tryLogin($login, $password)
     {
-        $loginType = testLogin($login);
+        $loginType = UserDao::testLogin($login);
 
         switch ($loginType) {
             case 0 :
@@ -66,13 +66,15 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
         }
 
 
-
-        if (password_verify($password, $request[0]["th_user_password"]);)
+        if (!empty($request))
         {
-            return $request[0]["th_user_id"]
-        } else {
-            return -3;
+            if (password_verify($password, $request[0]["th_user_password"]))
+            {
+                return $request[0]["th_user_id"]
+            }
         }
+
+        return -3
     }
 
 }
