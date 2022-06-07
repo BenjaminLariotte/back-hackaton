@@ -7,6 +7,11 @@ header("Access-Control-Allow-Origin: *");
 //récupération des données
 $data = json_decode(file_get_contents("php://input"));
 
+foreach ($data as $value)
+{
+    $value = valid_data($value);
+}
+
 $response = UserController::testLogin(valid_data($data));
 
 echo json_encode($response);
