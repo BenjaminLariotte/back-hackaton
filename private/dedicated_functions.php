@@ -1,5 +1,4 @@
 <?php
-
 define("ROOT", "http://localhost/back-hackaton/");
 
 function valid_data($data)
