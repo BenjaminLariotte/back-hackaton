@@ -3,6 +3,12 @@ require_once ROOT . 'core/Controller.php';
 
 class OpenFoodFactController extends Controller
 {
+    public static function makeRequest($req) {
+        $result = file_get_contents($req) ;
+
+        return $result ;
+    }
+  
     public static function getAllStoreFromFrance() {
         return "https://fr.openfoodfacts.org/stores.json" ;
     }
@@ -28,15 +34,15 @@ class OpenFoodFactController extends Controller
                 return "";
             }
             $fields = str_replace(";", ",", $fields);
-            if preg_match("_id(?:,.*)?$", $fields) {
+            if preg_match("/_id(?:,.*)?$/", $fields) {
                 $returnValue = $fields;
             } else {
                 $returnValue = "$fields,_id";
             }
             $returnValue = str_replace(" ", "", $returnValue);
-            if preg_match("^field=[\w_]+(?:,[\w_]+)*$", $returnValue) {
+            if preg_match("/^field=[\w_]+(?:,[\w_]+)*$/", $returnValue) {
                 return "&$returnValue" ;
-            } else if preg_match("^[\w_]+(?:,[\w_]+)*$", $returnValue) {
+            } else if preg_match("/^[\w_]+(?:,[\w_]+)*$/", $returnValue) {
                 return "&field=$returnValue" ;
             } else {
                 var_dump("ERROR : OpenFoodFactController::getFieldsPart::fields invalid (\"$fields\")") ;
@@ -45,25 +51,130 @@ class OpenFoodFactController extends Controller
         }
     }
 
+    public static function getOneConstraintPart($constraint, $tagIndex, $nutrIndex) {
+        if (!preg_match("/([\w_]*)([<>=!(?:in)(?:not_in)]+)(\[?[\w_\,\;]+\]?)/", $constraint, $matches)) {
+            var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid (\"$constraint\")") ;
+            return "" ;
+        }
+        #Ex: "A <= B" -> matches[1] = "A", matches[2] = "<=", matches[3] = "B"
+        switch ($matches[2]) {
+            case "=" :
+                return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=contains&tag_$tagIndex=$matches[3]";
+                break;
+            case "!=" :
+                return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=does_not_contain&tag_$tagIndex=$matches[3]";
+                break;
+            case "in" :
+                if (!preg_match("/\[?([\w_]*(?:[,\|\&][\w_]*)*)\]?/", str_replace(";", ",", $matches[3]), $values)) {
+                    var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid for an \"in\" operator (\"$constraint\")") ;
+                    return "" ;
+                }
+                $values = str_replace("&", ",", $values[1]) ;
+                switch ($matches[1]) :
+                    case "tags" :
+                        $resultValue = "labels_tags=$values" ;
+                        break ;
+                    default : 
+                        var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint not yet implemented (\"$constraint\")") ;
+                        $resultValue = "" ;
+                        break ;
+                return $resultValue;
+                break;
+            case "not_in" :
+                if (!preg_match("/\[?([\w_]*(?:[,\&][\w_]*)*)\]?/", str_replace(";", ",", $matches[3]), $values)) {
+                    var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid for an \"not_in\" operator (\"$constraint\")") ;
+                    return "" ;
+                }
+                $values = str_replace("&", ",", $values[1]) ;
+                $values = str_replace(",", ",-", $values) ;
+                switch ($matches[1]) :
+                    case "tags" :
+                        $resultValue = "labels_tags=-$values" ;
+                        break ;
+                    case "ingredients" : 
+                        if (!preg_match("/\[?([\w_]*(?:[,\|\&][\w_]*)*)\]?/", str_replace(";", ",", $matches[3]), $values)) {
+                            if (!preg_match("/[\w_]/", str_replace(";", ",", $matches[3]), $values)) { 
+                                var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid for an \"not_in\" operator (\"$constraint\")") ;
+                                return "" ;
+                            } else {
+                                $values = [$values[1]] ;
+                            }
+                        } else {
+                            $values = explode(",", str_replace(["|", "&"], ",", $values[1])) ;
+                        }
+                        $resultValue = "";
+                        foreach ($values as $v) {
+                            if (in_array($v, ["additives", "ingredients_from_palm_oil", "ingredients_that_may_be_from_palm_oil", "ingredients_from_or_that_may_be_from_palm_oil"])) {
+                                $resultValue .= "&$v=without"
+                            } else {
+                                var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint contains an invalid ingredients (\"$constraint\")") ;
+                            }
+                        }
+                        break ;
+                    default : 
+                        var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint not yet implemented (\"$constraint\")") ;
+                        $resultValue = "" ;
+                        break ;
+                return $resultValue;
+                break;
+            // Nutriments
+            case "<=" :
+                $operator = "lte" ;
+            case "<" :
+                $operator = "lt" ;
+            case ">=" :
+                $operator = "gte" ;
+            case ">" :
+                $operator = "gt" ;
+            case "=" :
+                $operator = "eq" ;
+            default :
+                if (isset($operator)) {
+                    return "nutriment_$nutrIndex=$matches[1]&nutriment_compare_$nutrIndex=$operator&nutriment_value_$nutrIndex=$matches[3]" ;
+                } else {
+                    var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint not yet implemented (\"$constraint\")") ;
+                    return "" ;
+                }
+            
+
+        }
+    } 
+
     public static function getConstraintsPart($constraints, $separator = null) {
         if (is_string($constraints) && !is_null($separator)) {
             $constraints = explode($separator, $constraints) ;
         }
         
         if (is_array($constraints)) {
-            $i = 0
+            $tagIndex = 0 ;
+            $nutrIndex = 0 ;
+
+            $resultValue = "" ;
             foreach($constraints as $c) {
-                if (preg_match("([\w]",$c)) { 
-                    $returnValue .= ",$f";
+                $resultForOne = OpenFoodFactController::getOneConstraintPart($c, $tagIndex, $nutrIndex) ;
+                if (!is_empty($resultForOne)) {
+                    $resultValue .= "&$resultForOne" ;
+                    if (str_contains($resultForOne, "tagtype_$tagIndex")) {
+                        $tagIndex += 1 ;
+                    } else if (str_contains($resultForOne, "nutriment_$nutrIndex")) {
+                        $nutrIndex += 1 ;
+                    } 
                 }
             }
+
+            return $resultValue ;
         }
     }
 
-    public static function getListOfProducts($constraints, $fields, $separator) {
-        $constraitsForAPI = $constraints;
+    public static function getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator = null) {
+        $constraintsForAPI = OpenFoodFactController::getConstraintsPart($constraints, $separator);
         $fieldsForAPI = OpenFoodFactController::getFieldsPart($fields) ;
-        return "https://fr.openfoodfacts.org/cgi/search.pl?action=process$constraitsForAPI$fields&json=true"
+        return "https://fr.openfoodfacts.org/cgi/search.pl?action=process$constraitsForAPI$fields&json=true&page_size=$maxNumberofResults"
+    }
+
+    public static function getListOfProducts($maxNumberofResults, $constraints, $fields, $separator = null) {
+        $url = OpenFoodFactController::getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator) ;
+        return OpenFoodFactController::makeRequest($url) ;
     }
 }
 
