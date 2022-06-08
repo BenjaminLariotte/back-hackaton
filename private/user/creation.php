@@ -26,6 +26,8 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $responseArray = (array)$userObject;
 
+    var_dump($responseArray);
+
     $responseArray["response_code"] = 1;
 
     echo json_encode($responseArray);
