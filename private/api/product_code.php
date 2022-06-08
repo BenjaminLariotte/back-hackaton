@@ -11,6 +11,6 @@ $data = json_decode(file_get_contents("php://input"));
 
 $data = valid_data($data);
 
-$response = APIController::researchProduct($data);
+$response = APIController::researchProductByCode($data);
 
 echo json_encode($response);
