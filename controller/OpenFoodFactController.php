@@ -194,4 +194,3 @@ class OpenFoodFactController extends Controller
         return OpenFoodFactController::makeRequest($url) ;
     }
 }
-

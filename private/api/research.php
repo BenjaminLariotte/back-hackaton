@@ -10,7 +10,11 @@ header("Access-Control-Allow-Origin: *");
 //récupération des données
 $data = json_decode(file_get_contents("php://input"));
 
-$data = valid_data($data);
+//vérification des données
+foreach ($data as $value)
+{
+    $value = valid_data($value);
+}
 
 //$response = APIController::researchProduct($data);
 if (property_exists($data, "resultPerPage")) {
@@ -38,7 +42,7 @@ if (property_exists($data, "additionalFilters")) {
 }
 
 if (property_exists($data, "fields")) {
-    $fields = $data->$fields;
+    $fields = $data->fields;
 } else {
     $fields = ["code","product_name_fr","image_url","origin_fr","nutrition_grade_fr","allergens","stores"] ;
 }
