@@ -22,7 +22,7 @@ class OpenFoodFactController extends Controller
         if (empty($fields)) {
             return "";
         } else if (is_array($fields)) {
-            $returnValue = "field=_id";
+            $returnValue = "fields=_id";
             foreach($fields as $f) {
                 if ($f !== "_id") { 
                     $returnValue .= ",$f";
@@ -30,7 +30,7 @@ class OpenFoodFactController extends Controller
             }
             return "&$returnValue";
         } else if (is_string($fields)) {
-            if ($fields == "all" || $fields = "field=") {
+            if ($fields == "all" || $fields = "fields=") {
                 return "";
             }
             $fields = str_replace(";", ",", $fields);
@@ -40,10 +40,10 @@ class OpenFoodFactController extends Controller
                 $returnValue = "$fields,_id";
             }
             $returnValue = str_replace(" ", "", $returnValue);
-            if preg_match("/^field=[\w_]+(?:,[\w_]+)*$/", $returnValue) {
+            if preg_match("/^fields=[\w_]+(?:,[\w_]+)*$/", $returnValue) {
                 return "&$returnValue" ;
             } else if preg_match("/^[\w_]+(?:,[\w_]+)*$/", $returnValue) {
-                return "&field=$returnValue" ;
+                return "&fields=$returnValue" ;
             } else {
                 var_dump("ERROR : OpenFoodFactController::getFieldsPart::fields invalid (\"$fields\")") ;
                 return "" ;
@@ -59,7 +59,11 @@ class OpenFoodFactController extends Controller
         #Ex: "A <= B" -> matches[1] = "A", matches[2] = "<=", matches[3] = "B"
         switch ($matches[2]) {
             case "=" :
-                return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=contains&tag_$tagIndex=$matches[3]";
+                if ($matches[1] == "search") {
+                    return "search_terms=$matches[3]"
+                } else {
+                    return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=contains&tag_$tagIndex=$matches[3]";
+                } 
                 break;
             case "!=" :
                 return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=does_not_contain&tag_$tagIndex=$matches[3]";
@@ -154,10 +158,10 @@ class OpenFoodFactController extends Controller
                 $resultForOne = OpenFoodFactController::getOneConstraintPart($c, $tagIndex, $nutrIndex) ;
                 if (!is_empty($resultForOne)) {
                     $resultValue .= "&$resultForOne" ;
-                    if (str_contains($resultForOne, "tagtype_$tagIndex")) {
-                        $tagIndex += 1 ;
-                    } else if (str_contains($resultForOne, "nutriment_$nutrIndex")) {
-                        $nutrIndex += 1 ;
+                    if (substr_count($resultForOne, "tagtype_$tagIndex") > 0) {
+                        $tagIndex += substr_count($resultForOne, "tagtype_$tagIndex") ;
+                    } else if (substr_count($resultForOne, "nutriment_$nutrIndex") > 0) {
+                        $nutrIndex += substr_count($resultForOne, "nutriment_$nutrIndex") ;
                     } 
                 }
             }
@@ -167,12 +171,17 @@ class OpenFoodFactController extends Controller
     }
 
     public static function getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator = null) {
-        $constraintsForAPI = OpenFoodFactController::getConstraintsPart($constraints, $separator);
+        $constraintsForAPI = ltrim(str_replace("&&", "&", OpenFoodFactController::getConstraintsPart($constraints, $separator)), "&") ;
         $fieldsForAPI = OpenFoodFactController::getFieldsPart($fields) ;
-        return "https://fr.openfoodfacts.org/cgi/search.pl?action=process$constraitsForAPI$fields&json=true&page_size=$maxNumberofResults"
+        return "https://fr.openfoodfacts.org/cgi/search.pl?$constraitsForAPI$fields&json=true&page_size=$maxNumberofResults" ;
     }
 
     public static function getListOfProducts($maxNumberofResults, $constraints, $fields, $separator = null) {
+        $url = OpenFoodFactController::getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator) ;
+        return OpenFoodFactController::makeRequest($url) ;
+    }
+
+    public static function getProductDetailByBarcode($barcode, $fields = "") {
         $url = OpenFoodFactController::getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator) ;
         return OpenFoodFactController::makeRequest($url) ;
     }
