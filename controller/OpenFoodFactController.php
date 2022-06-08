@@ -52,7 +52,7 @@ class OpenFoodFactController extends Controller
     }
 
     public static function getOneConstraintPart($constraint, $tagIndex, $nutrIndex) {
-        if (!preg_match("/([\w_]*)([<>=!(?:in)(?:not_in)]+)(\[?[\w_\,\;]+\]?)/", $constraint, $matches)) {
+        if (!preg_match("/([\w_]*)([<>=!]+)(\[?[\w_\,\;]+\]?)/", $constraint, $matches)) {
             var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid (\"$constraint\")") ;
             return "" ;
         }
@@ -68,13 +68,13 @@ class OpenFoodFactController extends Controller
             case "!=" :
                 return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=does_not_contain&tag_$tagIndex=$matches[3]";
                 break;
-            case "in" :
+            case "<>" :
                 if (!preg_match("/\[?([\w_]*(?:[,\|\&][\w_]*)*)\]?/", str_replace(";", ",", $matches[3]), $values)) {
                     var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid for an \"in\" operator (\"$constraint\")") ;
                     return "" ;
                 }
                 $values = str_replace("&", ",", $values[1]) ;
-                switch ($matches[1]) :
+                switch ($matches[1]) {
                     case "tags" :
                         $resultValue = "labels_tags=$values" ;
                         break ;
@@ -82,9 +82,10 @@ class OpenFoodFactController extends Controller
                         var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint not yet implemented (\"$constraint\")") ;
                         $resultValue = "" ;
                         break ;
+                    }
                 return $resultValue;
                 break;
-            case "not_in" :
+            case "><" :
                 if (!preg_match("/\[?([\w_]*(?:[,\&][\w_]*)*)\]?/", str_replace(";", ",", $matches[3]), $values)) {
                     var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint invalid for an \"not_in\" operator (\"$constraint\")") ;
                     return "" ;
@@ -145,8 +146,14 @@ class OpenFoodFactController extends Controller
     } 
 
     public static function getConstraintsPart($constraints, $separator = null) {
-        if (is_string($constraints) && !is_null($separator)) {
-            $constraints = explode($separator, $constraints) ;
+        
+        if (is_string($constraints)){
+            if (!is_null($separator)) {
+                $constraints = explode($separator, $constraints) ;
+            }
+            if (!is_array($constraints)) {
+                $constraints = [$constraints] ;
+            }
         }
         
         if (is_array($constraints)) {
@@ -156,7 +163,7 @@ class OpenFoodFactController extends Controller
             $resultValue = "" ;
             foreach($constraints as $c) {
                 $resultForOne = OpenFoodFactController::getOneConstraintPart($c, $tagIndex, $nutrIndex) ;
-                if (!is_empty($resultForOne)) {
+                if (!empty($resultForOne)) {
                     $resultValue .= "&$resultForOne" ;
                     if (substr_count($resultForOne, "tagtype_$tagIndex") > 0) {
                         $tagIndex += substr_count($resultForOne, "tagtype_$tagIndex") ;
@@ -173,11 +180,12 @@ class OpenFoodFactController extends Controller
     public static function getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator = null) {
         $constraintsForAPI = ltrim(str_replace("&&", "&", OpenFoodFactController::getConstraintsPart($constraints, $separator)), "&") ;
         $fieldsForAPI = OpenFoodFactController::getFieldsPart($fields) ;
-        return "https://fr.openfoodfacts.org/cgi/search.pl?$constraitsForAPI$fields&json=true&page_size=$maxNumberofResults" ;
+        return "https://fr.openfoodfacts.org/cgi/search.pl?$constraintsForAPI&$fields&json=true&page_size=$maxNumberofResults" ;
     }
 
     public static function getListOfProducts($maxNumberofResults, $constraints, $fields, $separator = null) {
         $url = OpenFoodFactController::getListOfProductsURL($maxNumberofResults, $constraints, $fields, $separator) ;
+        //var_dump($url) ;
         return OpenFoodFactController::makeRequest($url) ;
     }
 
