@@ -17,8 +17,4 @@ foreach ($data as $value)
 
 $response = APIController::compareProductPopularity($data->id1, $data->id2);
 
-
-var_dump($response);
-exit();
-
 echo json_encode($response);

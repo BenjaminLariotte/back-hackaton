@@ -10,4 +10,6 @@ header("Access-Control-Allow-Origin: *");
 
 //récupération des données
 $email = json_decode(file_get_contents("php://input"));
-var_dump($email);
+
+    $test = UserDao::testLogin($email);
+    var_dump($test);
