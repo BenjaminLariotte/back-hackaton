@@ -6,43 +6,31 @@ require_once ROOT . "controller/UserController.php";
 require_once ROOT . "core/database_connection.php";
 require_once ROOT . "models/ErrorClass.php";
 
+$db = new PDO ("mysql:host=".DB_HOST.";dbname=".DB_NAME.";charset=utf8mb4", DB_USER, DB_PASS);
+            
+header("Access-Control-Allow-Origin: *");
+
 //récupération des données
 $email = json_decode(file_get_contents("php://input"));
-$email = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_email = :email");
+
+//$test = UserDao::testLogin($email);
+
+ $emailExist = UserDao::testLogin($email);
 
 
-var_dump($email);
+if ($emailExist === 2 ){
+    $token = uniqid();
+    $sql = "INSERT INTO password_reset(email, token) VALUES ('$email', '$token')";
 
-exit;
-
-if (!empty($_POST))
-{
-
-    if (!empty($_POST["th_user_email"]))
-    {
+    mb_send_mail($email){
         
-        
-        //email control
-        if (!filter_var($_POST["th_user_email"], FILTER_VALIDATE_EMAIL)) {
-            die ("email non valid");
-        }
-       
-       $sql = "SELECT * FROM `th_user` WHERE `th_user_email`= :email";
+        $to = $email,
+        $subject = "Réinitialisez votre password";
+        $msg   ="";
+        $headers = "From: info@examplesite.com";
+        mail($to, $subject, $headers);
+        header('' . $email);
 
-       $query = $db->prepare($sql);
-
-       $query->bindValue(":email", $_POST["th_user_email"], PDO::PARAM_STR);
-
-       $query->execute();
-
-       $user = $query->fetch();
-
-      if(!$user){
-        die("email ou le mot de passe est invalide ");  
     }
-
-}  
-var_dump($email);
-
-exit;
+}
 ?>
