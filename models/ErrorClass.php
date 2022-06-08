@@ -1,6 +1,6 @@
 <?php
 
-define("ALLOWED_TYPES", ["error", "warning", ]);
+define("ALLOWED_TYPES", ["error", "warning"]);
 
 class ErrorResponse {
     private $errorTitle ;
@@ -10,7 +10,7 @@ class ErrorResponse {
 
     public function checkValues() {
         if in_array(strtolower($this->$errorType), ALLOWED_TYPES) {
-            
+            var_dump("WIP") ;
         }
     }
 
