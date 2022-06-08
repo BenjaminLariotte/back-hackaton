@@ -39,15 +39,30 @@ class OpenFoodFactController extends Controller
             } else if preg_match("^[\w_]+(?:,[\w_]+)*$", $returnValue) {
                 return "&field=$returnValue" ;
             } else {
-                var_dump("ERROR : OpenFoodFactController::getFieldsPart::fields invalid (\"$fields\")")
-                return ""
+                var_dump("ERROR : OpenFoodFactController::getFieldsPart::fields invalid (\"$fields\")") ;
+                return "" ;
             }
         }
     }
 
-    public static function getListOfProducts($constraints, $fields) {
+    public static function getConstraintsPart($constraints, $separator = null) {
+        if (is_string($constraints) && !is_null($separator)) {
+            $constraints = explode($separator, $constraints) ;
+        }
+        
+        if (is_array($constraints)) {
+            $i = 0
+            foreach($constraints as $c) {
+                if (preg_match("([\w]",$c)) { 
+                    $returnValue .= ",$f";
+                }
+            }
+        }
+    }
+
+    public static function getListOfProducts($constraints, $fields, $separator) {
         $constraitsForAPI = $constraints;
-        $fieldsForAPI = getFieldsPart($fields) ;
+        $fieldsForAPI = OpenFoodFactController::getFieldsPart($fields) ;
         return "https://fr.openfoodfacts.org/cgi/search.pl?action=process$constraitsForAPI$fields&json=true"
     }
 }
