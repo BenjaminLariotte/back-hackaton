@@ -1,23 +1,15 @@
 <?php
 
+//Création d'une constante pour début d'adresse des fichiers.
 define("ROOT", "C:/wamp64/www/Hackaton2022/back-hackaton/");
 
-function valid_str_data($data)
+
+//Fonction nettoyant le contenu entrant
+function valid_data($data)
 {
     if ($data)
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
-}
-
-function valid_data($data) {
-    if (is_string($data)) {
-        return valid_str_data($data) ;
-    } else if (is_object($data)) {
-        foreach($data as $prop) {
-            $prop = valid_data(strval($prop)) ;
-        }
-        return $data ;
-    }
 }

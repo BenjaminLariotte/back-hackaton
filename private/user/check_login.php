@@ -7,12 +7,9 @@ header("Access-Control-Allow-Origin: *");
 //récupération des données
 $data = json_decode(file_get_contents("php://input"));
 
-/*var_dump($data);
-foreach ($data as $value)
-{
-    $value = valid_data($value);
-}*/
+$data = valid_data($data);
 
-$response = UserController::testLogin(valid_data($data));
+//Test du login et renvoi de réponse 0 si inexistant, 1 si pseudo existant et 2 si email existant
+$response = UserController::testLogin($data);
 
 echo json_encode($response);

@@ -33,6 +33,7 @@ $constraints = [] ;
 if (property_exists($data, "searchTerm")) {
     $constraints[] = "search=".$data->searchTerm;
 }
+
 if (property_exists($data, "additionalFilters")) {
     if (is_array($data->additionalFilters)) {
         foreach ($data->additionalFilters as $c) {
@@ -46,8 +47,13 @@ if (property_exists($data, "fields")) {
 } else {
     $fields = ["code","product_name_fr","image_url","origin_fr","nutrition_grade_fr","allergens","stores", "generic_name", "ingredients_text_fr"] ;
 }
- 
+
+
 
 $response = OpenFoodFactController::getListOfProducts($resultPerPage, $pageNb, $constraints, $fields) ;
+
+/*$response = (array)$response;
+
+var_dump($response);*/
 
 echo json_encode($response); 

@@ -15,26 +15,31 @@ foreach ($data as $value)
     $value = valid_data($value);
 }
 
+//Vérification que les champ requis sont remplis
 if (!is_null($data->login && !is_null($data->password)))
 {
 
-    $userId = UserController::tryLogin($data->login, $data->password);
+    //Vérification du login et mot de passe, puis renvoi de l'id si validé
+    $catchLogin = UserController::tryLogin($data->login, $data->password);
 
-    $userObject = UserController::read($userId);
-
-    $responseArray = (array)$userObject;
-
-    $testArray = [];
-
-    foreach ($responseArray as $value)
+    if (is_int($catchLogin))
     {
-        $testArray[] = $value;
+        $userObject = UserController::read($catchLogin);
 
+        $responseArray = (array)$userObject;
+
+        //transformation du tableau en un tableau plus propre sans espace dans les index
+        foreach ($responseArray as $value)
+        {
+            $cleanResponseArray[] = $value;
+        }
+
+        $cleanResponseArray["response_code"] = 1;
+    }
+    else
+    {
+        $cleanResponseArray["response_code"] = $catchLogin;
     }
 
-    $testArray["response_code"] = 1;
-
-
-
-    echo json_encode($testArray);
+    echo json_encode($cleanResponseArray);
 }

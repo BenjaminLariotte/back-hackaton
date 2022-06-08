@@ -15,6 +15,7 @@ foreach ($data as $value)
     $value = valid_data($value);
 }
 
+//Compare la popularité de 2 produits sur les 3 dernières années
 $response = APIController::compareProductPopularity($data->id1, $data->id2);
 
 echo json_encode($response);

@@ -9,7 +9,7 @@ class ErrorResponse {
     private $other ;
 
     public function checkValues() {
-        if (in_array(strtolower($this->$errorType), ALLOWED_TYPES)) {
+        if (in_array(strtolower($this->errorType), ALLOWED_TYPES)) {
             var_dump("WIP") ;
         }
     }

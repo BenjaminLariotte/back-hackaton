@@ -26,15 +26,17 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $responseArray = (array)$userObject;
 
-    var_dump($responseArray);
+    //transformation du tableau en un tableau plus propre sans espace dans les index
+    foreach ($responseArray as $value)
+    {
+        $cleanResponseArray[] = $value;
+    }
 
-    $responseArray["response_code"] = 1;
-
-    echo json_encode($responseArray);
+    $cleanResponseArray["response_code"] = 1;
 }
 else
 {
-    $responseArray["response_code"] = 2;
+    $cleanResponseArray["response_code"] = 2;
 
-    echo json_encode($responseArray);
 }
+echo json_encode($responseArray);
