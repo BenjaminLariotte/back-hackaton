@@ -14,27 +14,31 @@ $data = valid_data($data);
 
 //$response = APIController::researchProduct($data);
 if (property_exists($data, "resultPerPage")) {
-    $resultPerPage = $data->$resultPerPage ;
+    $resultPerPage = strval($data->resultPerPage) ;
 } else {
-    $resultPerPage = 50;
+    $resultPerPage = "50";
 }
 
 if (property_exists($data, "pageNumber")) {
-    $pageNb = "search=".$data->$pageNumber;
+    $pageNb = strval($data->pageNumber);
 } else {
-    $pageNb = 1 ;
+    $pageNb = "1" ;
 }
 
-$constraints = []
+$constraints = [] ;
 if (property_exists($data, "searchTerm")) {
-    $constraints[] = "search=".$data->$searchTerm;
+    $constraints[] = "search=".$data->searchTerm;
 }
 if (property_exists($data, "additionalFilters")) {
-    $constraints[] = "search=".$data->$additionalFilters;
+    if (is_array($data->additionalFilters)) {
+        foreach ($data->additionalFilters as $c) {
+            $constraints[] = $c;
+        }
+    }
 }
 
 if (property_exists($data, "fields")) {
-    $fields = "search=".$data->$fields;
+    $fields = $data->$fields;
 } else {
     $fields = ["code","product_name_fr","image_url","origin_fr","nutrition_grade_fr","allergens","stores"] ;
 }

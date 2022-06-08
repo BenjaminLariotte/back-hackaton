@@ -177,20 +177,20 @@ class OpenFoodFactController extends Controller
         }
     }
 
-    public static function getListOfProductsURL($resultPerPage, $constraints, $fields, $separator = null) {
+    public static function getListOfProductsURL($resultPerPage, $pageNb, $constraints, $fields, $separator = null) {
         $constraintsForAPI = ltrim(str_replace("&&", "&", OpenFoodFactController::getConstraintsPart($constraints, $separator)), "&") ;
         $fieldsForAPI = OpenFoodFactController::getFieldsPart($fields) ;
-        return "https://fr.openfoodfacts.org/cgi/search.pl?$constraintsForAPI&$fields&json=true&page_size=$resultPerPage" ;
+        return "https://fr.openfoodfacts.org/cgi/search.pl?$constraintsForAPI&$$fieldsForAPI&json=true&page_size=$resultPerPage&page=$pageNb" ;
     }
 
-    public static function getListOfProducts($resultPerPage, $constraints, $fields, $separator = null) {
-        $url = OpenFoodFactController::getListOfProductsURL($resultPerPage, $constraints, $fields, $separator) ;
+    public static function getListOfProducts($resultPerPage, $pageNb, $constraints, $fields, $separator = null) {
+        $url = OpenFoodFactController::getListOfProductsURL($resultPerPage, $pageNb, $constraints, $fields, $separator) ;
         //var_dump($url) ;
         return OpenFoodFactController::makeRequest($url) ;
     }
 
     public static function getProductDetailByBarcode($barcode, $fields = "") {
-        $url = OpenFoodFactController::getListOfProductsURL($resultPerPage, $constraints, $fields, $separator) ;
+        $url = OpenFoodFactController::getListOfProductsURL($resultPerPage, $pageNb, $constraints, $fields, $separator) ;
         return OpenFoodFactController::makeRequest($url) ;
     }
 }
