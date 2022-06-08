@@ -1,0 +1,12 @@
+<?php
+require_once ROOT . 'dao/UserDao.php';
+require_once ROOT . 'core/Controller.php';
+
+class AccountPassController extends Controller {
+
+
+    public function index(){
+
+    }
+}
+?>
