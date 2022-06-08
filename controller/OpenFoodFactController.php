@@ -15,7 +15,7 @@ class OpenFoodFactController extends Controller
 
     public static function createNewRequest($user)
     {
-        return "https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=breakfast_cereals&tagtype_1=nutrition_grades&tag_contains_1=contains&tag_1=A&additives=without&ingredients_from_palm_oil=without&json=1"
+        return "https://fr.openfoodfacts.org/cgi/search.pl?action=process&tagtype_0=categories&tag_contains_0=contains&tag_0=breakfast_cereals&tagtype_1=nutrition_grades&tag_contains_1=contains&tag_1=A&additives=without&ingredients_from_palm_oil=without&json=1" ;
     }
 
     public static function getFieldsPart($fields) {
@@ -34,15 +34,15 @@ class OpenFoodFactController extends Controller
                 return "";
             }
             $fields = str_replace(";", ",", $fields);
-            if preg_match("/_id(?:,.*)?$/", $fields) {
+            if (preg_match("/_id(?:,.*)?$/", $fields)) {
                 $returnValue = $fields;
             } else {
                 $returnValue = "$fields,_id";
             }
             $returnValue = str_replace(" ", "", $returnValue);
-            if preg_match("/^fields=[\w_]+(?:,[\w_]+)*$/", $returnValue) {
+            if (preg_match("/^fields=[\w_]+(?:,[\w_]+)*$/", $returnValue)) {
                 return "&$returnValue" ;
-            } else if preg_match("/^[\w_]+(?:,[\w_]+)*$/", $returnValue) {
+            } else if (preg_match("/^[\w_]+(?:,[\w_]+)*$/", $returnValue)) {
                 return "&fields=$returnValue" ;
             } else {
                 var_dump("ERROR : OpenFoodFactController::getFieldsPart::fields invalid (\"$fields\")") ;
@@ -60,7 +60,7 @@ class OpenFoodFactController extends Controller
         switch ($matches[2]) {
             case "=" :
                 if ($matches[1] == "search") {
-                    return "search_terms=$matches[3]"
+                    return "search_terms=$matches[3]" ;
                 } else {
                     return "tagtype_$tagIndex=$matches[1]&tag_contains_$tagIndex=contains&tag_$tagIndex=$matches[3]";
                 } 
@@ -91,7 +91,7 @@ class OpenFoodFactController extends Controller
                 }
                 $values = str_replace("&", ",", $values[1]) ;
                 $values = str_replace(",", ",-", $values) ;
-                switch ($matches[1]) :
+                switch ($matches[1]) {
                     case "tags" :
                         $resultValue = "labels_tags=-$values" ;
                         break ;
@@ -109,7 +109,7 @@ class OpenFoodFactController extends Controller
                         $resultValue = "";
                         foreach ($values as $v) {
                             if (in_array($v, ["additives", "ingredients_from_palm_oil", "ingredients_that_may_be_from_palm_oil", "ingredients_from_or_that_may_be_from_palm_oil"])) {
-                                $resultValue .= "&$v=without"
+                                $resultValue .= "&$v=without" ;
                             } else {
                                 var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint contains an invalid ingredients (\"$constraint\")") ;
                             }
@@ -119,9 +119,10 @@ class OpenFoodFactController extends Controller
                         var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint not yet implemented (\"$constraint\")") ;
                         $resultValue = "" ;
                         break ;
+                    }
                 return $resultValue;
                 break;
-            // Nutriments
+            /*Nutriments*/
             case "<=" :
                 $operator = "lte" ;
             case "<" :
@@ -139,8 +140,7 @@ class OpenFoodFactController extends Controller
                     var_dump("ERROR : OpenFoodFactController::getOneConstraintPart::constraint not yet implemented (\"$constraint\")") ;
                     return "" ;
                 }
-            
-
+                break;
         }
     } 
 
