@@ -43,12 +43,4 @@ class ErrorResponse {
     public function setOther($input) {
         $this->other = $input ;
     }
-
-    public function getOther() {
-        return $this->other ;
-    }
-
-    public function setOther($input) {
-        $this->other = $input ;
-    }
 }
