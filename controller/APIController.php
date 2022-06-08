@@ -5,11 +5,16 @@ class APIController extends Controller
 {
     public static function researchProduct($name)
     {
+        $result = file_get_contents("https://fr.openfoodfacts.org/api/v2/search?product_name_fr=".$name."|categories_tags_fr=".$name."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,stores");
 
+        //$result[0] = file_get_contents("https://fr.openfoodfacts.org/api/v2/search?categories_tags_fr=".$name."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,stores");
 
-        $result[] = file_get_contents("https://fr.openfoodfacts.org/api/v2/search?product_name_fr=".$name."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,stores");
+        return $result;
+    }
 
-        $result[] = file_get_contents("https://fr.openfoodfacts.org/api/v2/search?categories_tags_fr=".$name."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,stores");
+    public static function researchProductByCode($code)
+    {
+        $result = file_get_contents("https://fr.openfoodfacts.org/api/v2/search?code=".$code."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,stores");
 
         return $result;
     }
