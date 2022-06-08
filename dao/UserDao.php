@@ -64,7 +64,7 @@ VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->g
                 break;
             default :
                 $error = new ErrorResponse("Authentification ratée", "Retour de 'UserDao::testLogin' inconnu (\"$logintype\")");
-
+                return $error;
                 break;
         }
 
