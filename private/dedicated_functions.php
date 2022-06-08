@@ -1,4 +1,6 @@
 <?php
+
+
 define("ROOT", "c://xampp/htdocs/back-hackaton/");
 
 function valid_data($data)
@@ -8,3 +10,5 @@ function valid_data($data)
     $data = htmlspecialchars($data);
     return $data;
 }
+
+?>

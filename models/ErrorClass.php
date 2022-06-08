@@ -1,9 +1,18 @@
 <?php
 
+define("ALLOWED_TYPES", ["error", "warning"]);
+
 class ErrorResponse {
     private $errorTitle ;
     private $errorMessage ;
+    private $errorType ;
     private $other ;
+
+    public function checkValues() {
+        if (in_array(strtolower($this->$errorType), ALLOWED_TYPES)) {
+            var_dump("WIP") ;
+        }
+    }
 
     public function __construct($errorTtl, $errorMsg, $oth = null) {
         $this->errorTitle = $errorTtl ;
