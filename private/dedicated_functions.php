@@ -1,6 +1,5 @@
 <?php
-
-define("ROOT", "C:/wamp64/www/Hackaton2022/back-hackaton/");
+define("ROOT", "http://localhost/back-hackaton/");
 
 function valid_data($data)
 {
