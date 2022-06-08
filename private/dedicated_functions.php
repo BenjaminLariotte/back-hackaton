@@ -1,5 +1,5 @@
 <?php
-define("ROOT", "http://localhost/back-hackaton/");
+define("ROOT", "c://xampp/htdocs/back-hackaton/");
 
 function valid_data($data)
 {
