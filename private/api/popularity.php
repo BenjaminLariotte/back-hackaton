@@ -10,11 +10,11 @@ header("Access-Control-Allow-Origin: *");
 $data = json_decode(file_get_contents("php://input"));
 
 //vérification des données
-foreach ($data as $value)
-{
-    $value = valid_data($value);
+if (property_exists($data, "resultPerPage")) {
+    $resultPerPage = strval($data->resultPerPage) ;
+} else {
+    $resultPerPage = "50";
 }
-
 //Compare la popularité de 2 produits sur les 3 dernières années
 $response = APIController::compareProductPopularity($data->id1, $data->id2);
 
