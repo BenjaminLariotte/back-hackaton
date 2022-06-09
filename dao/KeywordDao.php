@@ -1,22 +1,11 @@
 <?php
-require_once ROOT . "models/UserClass.php";
-require_once ROOT . "controller/UserController.php";
-require_once ROOT . "core/database_connection.php";
+require_once ROOT . "controller/KeywordController.php";
+require_once ROOT . "core/keyword_database_connection.php";
 require_once ROOT . "models/ErrorClass.php";
 
 
-class UserDao
+class KeywordDao
 {
-    public static function createNewUser($user)
-    {
-        DataBase::databaseRequest("INSERT INTO th_user (th_user_pseudo, th_user_email, th_user_password)
-VALUES (?, ?, ?)", array($user->getUserPseudo(), $user->getUserEmail(), $user->getUserPassword()));
-
-        $_SESSION['id'] = DataBase::databaseLastId();
-
-    }
-
-
     public static function readUser($id)
     {
         $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_id = ?", array($id));
