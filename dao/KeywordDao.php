@@ -67,6 +67,7 @@ class KeywordDao
         foreach ($applicable as $a) {
             set($result[$s], $result[$s] + ($a->monthly_search_count * $a->MAX_VS)) ;
         }
+        return $result ;
     }
 
     public static function testNoKeyword () {
