@@ -62,6 +62,10 @@ class KeywordController extends Controller
 
     public static function Test2() {
         //$temp = KeywordController::getRequests() ;
-        return KeywordDao::tesWithKeyword() ;
+        return KeywordDao::testWithKeyword() ;
+    }
+
+    public static function compareStoreForOneProduct($keywords = [], $stores = []) {
+        return KeywordDao::compareStoreForOneProduct($keywords, $stores) ;
     }
 }
