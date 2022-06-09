@@ -1,13 +1,13 @@
 <?php
 
 class Keyword {
-    private $id ; 
-    private $MAX_VS ; 
-    private $keyword ; 
-    private $monthly_search_count ; 
-    private $NbKeyword ; 
-    private $brand ; 
-    private $domain_name ; 
+    public $id ; 
+    public $MAX_VS ; 
+    public $keyword ; 
+    public $monthly_search_count ; 
+    public $NbKeyword ; 
+    public $brand ; 
+    public $domain_name ; 
 
     public function __construct($myId, $myMAX_VS, $myKeyword, $myMonthly_search_count, $myNbKeyword, $myBrand, $myDomain_name) {
         $this->id = $myId ;
