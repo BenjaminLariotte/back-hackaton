@@ -24,16 +24,15 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $userObject = UserController::read($_SESSION["id"]);
 
+    //Transformation de l'objet user dans un tableau
     $cleanResponseArray["id"] = $userObject->getId();
     $cleanResponseArray["th_user_pseudo"] = $userObject->getUserPseudo();
     $cleanResponseArray["th_user_email"] = $userObject->getUserEmail();
     $cleanResponseArray["th_user_password"] = $userObject->getUserPassword();
-
     $cleanResponseArray["response_code"] = 1;
 }
 else
 {
     $cleanResponseArray["response_code"] = 2;
-
 }
 echo json_encode($cleanResponseArray);

@@ -48,12 +48,17 @@ if (property_exists($data, "fields")) {
     $fields = ["code","product_name_fr","image_url","origin_fr","nutrition_grade_fr","allergens_imported","stores", "generic_name", "ingredients_text_fr"] ;
 }
 
-
-
 $response = OpenFoodFactController::getListOfProducts($resultPerPage, $pageNb, $constraints, $fields) ;
 
-/*$response = (array)$response;
+/*
+function cmpObject($a, $b)
+{
+    return strcmp($a->nutrition_grade_fr,  $b->nutrition_grade_fr);
+}
 
-var_dump($response);*/
+usort($response->products[0], "cmpObject");
 
+var_dump($response->products[0]);
+exit();
+*/
 echo json_encode($response); 

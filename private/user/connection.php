@@ -26,6 +26,7 @@ if (!is_null($data->login && !is_null($data->password)))
     {
         $userObject = UserController::read($catchLogin);
 
+        //Transformation de l'objet user dans un tableau
         $cleanResponseArray["id"] = $userObject->getId();
         $cleanResponseArray["th_user_pseudo"] = $userObject->getUserPseudo();
         $cleanResponseArray["th_user_email"] = $userObject->getUserEmail();
