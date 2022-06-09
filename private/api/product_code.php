@@ -21,6 +21,7 @@ $responseArray["code"] = $response->code ?? null;
 $responseArray["generic_name"] = $response->generic_name ?? null;
 $responseArray["image_url"] = $response->image_url ?? null;
 $responseArray["ingredients_text_fr"] = $response->ingredients_text_fr ?? null;
+$responseArray["_keywords"] = $response->_keywords ?? null;
 $responseArray["nutrition_grade_fr"] = $response->nutrition_grade_fr ?? null;
 $responseArray["origin_fr"] = $response->origin_fr ?? null;
 $responseArray["product_name_fr"] = $response->product_name_fr ?? null;

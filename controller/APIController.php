@@ -16,7 +16,7 @@ class APIController extends Controller
     //Recherche d'un produit sur l'api par code produit
     public static function researchProductByCode($code)
     {
-        $result = json_decode(file_get_contents("https://fr.openfoodfacts.org/api/v2/search?code=".$code."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,allergens_imported,stores,generic_name,ingredients_text_fr"));
+        $result = json_decode(file_get_contents("https://fr.openfoodfacts.org/api/v2/search?code=".$code."&fields=code,product_name_fr,image_url,origin_fr,nutrition_grade_fr,allergens,allergens_imported,stores,generic_name,ingredients_text_fr,_keywords"));
 
         return $result;
     }
