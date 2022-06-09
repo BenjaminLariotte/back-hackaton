@@ -26,13 +26,10 @@ if (!is_null($data->login && !is_null($data->password)))
     {
         $userObject = UserController::read($catchLogin);
 
-        $responseArray = (array)$userObject;
-
-        //transformation du tableau en un tableau plus propre sans espace dans les index
-        foreach ($responseArray as $value)
-        {
-            $cleanResponseArray[] = $value;
-        }
+        $cleanResponseArray["id"] = $userObject->getId();
+        $cleanResponseArray["th_user_pseudo"] = $userObject->getUserPseudo();
+        $cleanResponseArray["th_user_email"] = $userObject->getUserEmail();
+        $cleanResponseArray["th_user_password"] = $userObject->getUserPassword();
 
         echo json_encode($cleanResponseArray);
     }

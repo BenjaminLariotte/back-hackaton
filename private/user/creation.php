@@ -24,13 +24,10 @@ if (!is_null($data->username) && !is_null($data->email) && !is_null($data->passw
 
     $userObject = UserController::read($_SESSION["id"]);
 
-    $responseArray = (array)$userObject;
-
-    //transformation du tableau en un tableau plus propre sans espace dans les index
-    foreach ($responseArray as $value)
-    {
-        $cleanResponseArray[] = $value;
-    }
+    $cleanResponseArray["id"] = $userObject->getId();
+    $cleanResponseArray["th_user_pseudo"] = $userObject->getUserPseudo();
+    $cleanResponseArray["th_user_email"] = $userObject->getUserEmail();
+    $cleanResponseArray["th_user_password"] = $userObject->getUserPassword();
 
     $cleanResponseArray["response_code"] = 1;
 }
