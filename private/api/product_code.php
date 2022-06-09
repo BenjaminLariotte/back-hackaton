@@ -15,6 +15,7 @@ $response = APIController::researchProductByCode($data);
 
 $response = $response->products[0];
 
+$responseArray["allergens"] = $response->allergens ?? null;
 $responseArray["allergens_imported"] = $response->allergens_imported ?? null;
 $responseArray["code"] = $response->code ?? null;
 $responseArray["generic_name"] = $response->generic_name ?? null;
