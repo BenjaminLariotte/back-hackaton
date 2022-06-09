@@ -1,4 +1,5 @@
 <?php
+require_once ROOT . "models/KeywordClass.php";
 require_once ROOT . "controller/KeywordController.php";
 require_once ROOT . "core/keyword_database_connection.php";
 require_once ROOT . "models/ErrorClass.php";
@@ -6,70 +7,67 @@ require_once ROOT . "models/ErrorClass.php";
 
 class KeywordDao
 {
-    public static function readUser($id)
-    {
-        $userArray = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_id = ?", array($id));
-
-        $userObject = new User($userArray[0]["th_user_pseudo"], $userArray[0]["th_user_email"], $userArray[0]["th_user_password"]);
-        $userObject->setId((int)$id);
-
-        return $userObject;
+    public static function makeRequest($request, $placeholders = [], $values = []) {
+        $actualRequest = $request ;
+        for($i = 0; $i < min(count($placeholders), count($values)); $i++) {
+            str_replace($placeholders[$i], $values[$i], $actualRequest) ;
+        }
+        $responseArray = KwdDataBase::databaseRequest($actualRequest) ;
+        $keywordsArray = [] ;
+        foreach ($responseArray as $piece) {
+            $keywordObject = new Keyword($piece["id"], $piece["MAX_VS"], $piece["keyword"], $piece["monthly_search_count"], $piece["NbKeyword"], $piece["brand"], $piece["domain_name"])  ;
+            $keywordsArray[] = $keywordObject ;
+        }
+        return $keywordsArray;
     }
 
-    public static function testLogin($login)
-    {
-        $pseudo = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_pseudo = ?", array($login));
-        $email = DataBase::databaseRequest("SELECT * from th_user WHERE th_user_email = ?", array($login));
-
-
-        if (!empty($email))
-        {
-            return 2;
+    public static function testNoKeyword () {
+        $startTime = time() ;
+        for ($i = 0; $i < 3; $i++) {
+            var_dump("Executing Request #$i");
+            KeywordDao::makeRequest("SELECT newR.id, newR.MAX_VS,
+            newK.keyword, newK.monthly_search_count, newK.NbKeyword,
+            REGEXP_REPLACE(W.domain_name, '(?:https://www\.)|(?:\.fr)|(?:\.com)', '') as brand, W.domain_name
+    FROM (
+        SELECT K.id, K.keyword, K.monthly_search_count, (LENGTH(K.keyword) - LENGTH(REPLACE(K.keyword, ' ', '')) + 1) AS NbKeyword 
+        FROM market_ranking.keyword as K
+        WHERE K.monthly_search_count >= 100) as newK
+    INNER JOIN (
+        SELECT R.id, MAX(R.visibility_score) AS MAX_VS, R.keyword_id, R.website_id
+        FROM market_ranking.ranked_page AS R
+        GROUP BY R.keyword_id, R.website_id
+    ) as newR
+    ON newK.id = newR.keyword_id
+    INNER JOIN market_ranking.website AS W 
+    ON newR.website_id = W.id;") ;
         }
-        elseif (!empty($pseudo))
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+        $requestTime = time() - $startTime ;
+        echo "Result = $requestTime s" ;
     }
 
-    public static function tryLogin($login, $password)
-    {
-        $loginType = UserDao::testLogin($login);
-
-        switch ($loginType) {
-            case 0 :                
-                $error = new ErrorResponse("Authentification ratée", "Nom de compte/email inexistant");
-                return $error;
-                break;
-            case 1 :
-                $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_pseudo = ?", array($login));
-                break;
-            case 2 :
-                $request = DataBase::databaseRequest("SELECT th_user_password, th_user_id from th_user WHERE th_user_email = ?", array($login));
-                break;
-            default :
-                $error = new ErrorResponse("Authentification ratée", "Retour de 'UserDao::testLogin' inconnu (\"$logintype\")");
-                return $error;
-                break;
+    public static function testWithKeyword () {
+        $startTime = time() ;
+        $keywords = ["yaourt", "creme", "dessert", "cafe", "the"] ;
+        for ($i = 0; $i < 3; $i++) {
+            var_dump("Executing Request #$i") ;
+            KeywordDao::makeRequest("SELECT newR.id, newR.MAX_VS,
+            newK.keyword, newK.monthly_search_count, newK.NbKeyword,
+            REGEXP_REPLACE(W.domain_name, '(?:https://www\.)|(?:\.fr)|(?:\.com)', '') as brand, W.domain_name
+    FROM (
+        SELECT K.id, K.keyword, K.monthly_search_count, (LENGTH(K.keyword) - LENGTH(REPLACE(K.keyword, ' ', '')) + 1) AS NbKeyword 
+        FROM market_ranking.keyword as K
+        WHERE K.monthly_search_count >= 100 AND K.keyword LIKE '%?kwd?%' ) as newK
+    INNER JOIN (
+        SELECT R.id, MAX(R.visibility_score) AS MAX_VS, R.keyword_id, R.website_id
+        FROM market_ranking.ranked_page AS R
+        GROUP BY R.keyword_id, R.website_id
+    ) as newR
+    ON newK.id = newR.keyword_id
+    INNER JOIN market_ranking.website AS W 
+    ON newR.website_id = W.id;", "?kwd?", $keywords[i]) ;
         }
-
-
-
-        if (password_verify($password, $request[0]["th_user_password"]))
-        {
-            if (password_verify($password, $request[0]["th_user_password"]))
-            {
-                return $request[0]["th_user_id"] ;
-            }
-        }
-
-        $error = new ErrorResponse("Authentification ratée", "Mot de passe incorrect");
-
-        return $error;
+        $requestTime = time() - $startTime ;
+        echo "Result = $requestTime s" ;
     }
 
 }
