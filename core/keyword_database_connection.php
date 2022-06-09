@@ -1,10 +1,10 @@
 <?php
 
 // Définition de constantes globales
-define('DB_HOST', 'data-positionnement.cf');
-define('DB_NAME', 'market-ranking');
-define('DB_USER', 'kernighan');
-define('DB_PASS', '9]u5ox.%M');
+define('DB_HOST_MK', 'data-positionnement.cf:9622');
+define('DB_NAME_MK', 'market_ranking');
+define('DB_USER_MK', 'kernighan');
+define('DB_PASS_MK', 'q]?u5ox.%M');
 
 
 class KwdDataBase
@@ -18,8 +18,8 @@ class KwdDataBase
         {
             self::$database = new PDO
             (
-                "mysql:host=".DB_HOST.";dbname=".DB_NAME.";charset=utf8mb4",
-                DB_USER, DB_PASS,
+                "mysql:host=".DB_HOST_MK.";dbname=".DB_NAME_MK.";charset=utf8mb4",
+                DB_USER_MK, DB_PASS_MK,
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
