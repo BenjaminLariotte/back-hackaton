@@ -39,4 +39,4 @@ else
     $cleanResponseArray["response_code"] = 2;
 
 }
-echo json_encode($responseArray);
+echo json_encode($cleanResponseArray);
