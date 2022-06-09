@@ -107,7 +107,7 @@ class KeywordDao
             exit ;*/
             if (!empty($stores)) {
                 foreach ($stores as $s) {
-                    if (str_contains(strtolower($s), strtolower($piece->brand))) {
+                    if (str_contains(strtolower($s), strtolower($piece->brand)) || str_contains(strtolower($piece->brand), strtolower($s))) {
                         $applicable[] = $piece ;
                         break ;
                     }
