@@ -18,7 +18,6 @@ foreach ($data as $value)
 //Vérification que les champ requis sont remplis
 if (!is_null($data->login && !is_null($data->password)))
 {
-
     //Vérification du login et mot de passe, puis renvoi de l'id si validé
     $catchLogin = UserController::tryLogin($data->login, $data->password);
 
@@ -32,13 +31,7 @@ if (!is_null($data->login && !is_null($data->password)))
         $cleanResponseArray["th_user_email"] = $userObject->getUserEmail();
         $cleanResponseArray["th_user_password"] = $userObject->getUserPassword();
 
+
         echo json_encode($cleanResponseArray);
     }
-else
-    {
-        $cleanResponse = $catchLogin;
-
-        echo json_encode($cleanResponse);
-    }
-
 }
