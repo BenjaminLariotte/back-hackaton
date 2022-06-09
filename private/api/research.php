@@ -45,7 +45,7 @@ if (property_exists($data, "additionalFilters")) {
 if (property_exists($data, "fields")) {
     $fields = $data->fields;
 } else {
-    $fields = ["code","product_name_fr","image_url","origin_fr","nutrition_grade_fr","allergens","stores", "generic_name", "ingredients_text_fr"] ;
+    $fields = ["code","product_name_fr","image_url","origin_fr","nutrition_grade_fr","allergens_imported","stores", "generic_name", "ingredients_text_fr"] ;
 }
 
 
