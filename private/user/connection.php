@@ -34,12 +34,13 @@ if (!is_null($data->login && !is_null($data->password)))
             $cleanResponseArray[] = $value;
         }
 
-        $cleanResponseArray["response_code"] = 1;
+        echo json_encode($cleanResponseArray);
     }
-    else
+else
     {
-        $cleanResponseArray["response_code"] = $catchLogin;
+        $cleanResponse = $catchLogin;
+
+        echo json_encode($cleanResponse);
     }
 
-    echo json_encode($cleanResponseArray);
 }
